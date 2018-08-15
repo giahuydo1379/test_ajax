@@ -13,42 +13,49 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', function () {
-    $tasks = App\Task::all();
+// Route::get('/', function () {
+//     $tasks = App\Task::all();
+ 
+//     return View::make('welcome')->with('tasks', $tasks);
+// });
 
-    return View::make('welcome')->with('tasks',$tasks);
-});
+// Route::get('/tasks/{task_id?}', function ($task_id) {
+//     $task = App\Task::find($task_id);
 
-Route::get('/tasks/{task_id?}',function($task_id){
-    $task = App\Task::find($task_id);
+//     return Response::json($task);
+// });
 
-    return Response::json($task);
-});
+// Route::post('/tasks', function (Request $request) {
+//     $task = App\Task::create($request->all());
 
-Route::post('/tasks',function(Request $request){
-    $task = App\Task::create($request->all());
-
-    return Response::json($task);
-});
+//     return Response::json($task);
+// });
 
 
-Route::put('/tasks/{task_id?}',function(Request $request,$task_id){ 
-    $task = App\Task::find($task_id);
+// Route::put('/tasks/{task_id?}', function (Request $request, $task_id) {
+//     $task = App\Task::find($task_id);
 
-    $task->task = $request->task;
-    $task->description = $request->description;
+//     $task->task = $request->task;
+//     $task->description = $request->description;
 
-    $task->save();
+//     $task->save();
 
-    return Response::json($task);
-});
+//     return Response::json($task);
+// });
 
-Route::delete('/tasks/{task_id?}',function($task_id){
-    $task = App\Task::destroy($task_id);
+// Route::delete('/tasks/{task_id?}', function ($task_id) {
+//     $task = App\Task::destroy($task_id);
 
-    return Response::json($task);
-});
+//     return Response::json($task);
+// });
 
-Route::get('/test', function() {
-   return view('view');
+Route::get('/', 'TasksController@index');
+Route::get('/tasks/{task_id?}', 'TasksController@show');
+Route::post('/tasks', 'TasksController@store');
+Route::put('/tasks/{task_id?}', 'TasksController@update');
+Route::delete('/tasks/{task_id?}', 'TasksController@destroy');
+
+
+Route::get('/test', function () {
+    return view('view');
 });

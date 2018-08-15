@@ -20,6 +20,7 @@
                         <th>Task</th>
                         <th>Description</th>
                         <th>Date Created</th>
+                        <th>Email</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -29,8 +30,9 @@
                         <td>{{$task->id}}</td>
                         <td>{{$task->task}}</td>
                         <td>{{$task->description}}</td>
-                        <td>{{$task->created_at}}</td>
-                        <td>
+                        <td width="100px">{{$task->created_at}}</td>
+                        <td>{{$task->email}}</td>
+                        <td width="100px">
                             <button class="btn btn-warning btn-xs btn-detail open-modal" value="{{$task->id}}">Edit</button>
                             <button class="btn btn-danger btn-xs btn-delete delete-task" value="{{$task->id}}">Delete</button>
                         </td>
@@ -50,7 +52,10 @@
                         <div class="modal-body">
                             <form id="frmTasks" name="frmTasks" class="form-horizontal" novalidate="">
 
-                                <div class="form-group error">
+                                <div class="error">
+                                    <p class="text-error" id="error-modal"></p>
+                                </div>
+                                <div class="form-group">
                                     <label for="inputTask" class="col-sm-3 control-label">Task</label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control has-error" id="task" name="task" placeholder="Task" value="">
@@ -63,6 +68,15 @@
                                         <input type="text" class="form-control" id="description" name="description" placeholder="Description" value="">
                                     </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Email</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="email" name="email" placeholder="email" value="">
+                                    </div>
+                                  <span class="text-danger" id="error-email">{{ $errors->first('email') }}</span>
+                                </div>
+
                             </form>
                         </div>
                         <div class="modal-footer">

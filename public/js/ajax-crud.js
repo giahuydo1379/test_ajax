@@ -2,21 +2,26 @@ $(document).ready(function () {
 
     var url = "/tasks";
 
+    function open_modal() {
+        $('.open-modal').click(function () {
+            var task_id = $(this).val();
+
+            $.get(url + '/' + task_id, function (data) {
+                //success data
+                console.log(data);
+                $('#task_id').val(data.id);
+                $('#task').val(data.task);
+                $('#description').val(data.description);
+                $('#email').val(data.email);
+                $('#btn-save').val("update");
+
+                $('#myModal').modal('show');
+            })
+        });
+    }
     //display modal form for task editing
-    $('.open-modal').click(function () {
-        var task_id = $(this).val();
+    open_modal();
 
-        $.get(url + '/' + task_id, function (data) {
-            //success data
-            console.log(data);
-            $('#task_id').val(data.id);
-            $('#task').val(data.task);
-            $('#description').val(data.description);
-            $('#btn-save').val("update");
-
-            $('#myModal').modal('show');
-        })
-    });
 
     //display modal form for creating new task
     $('#btn-add').click(function () {
@@ -26,10 +31,11 @@ $(document).ready(function () {
     });
 
     //delete task and remove it from list
-    $('.delete-task').click(function () {
+    //  $('.delete-task').click(function () {
+    $(document).on("click", ".delete-task", function () {
 
 
-        var task_id = $(this).val(); 
+        var task_id = $(this).val();
         var result = confirm("Want to delete " + task_id + " ?");
         if (result) {
             $.ajaxSetup({
@@ -37,9 +43,10 @@ $(document).ready(function () {
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 }
             })
+
             $.ajax({
 
-                type: "DELETE", 
+                type: "DELETE",
                 url: url + '/' + task_id,
                 success: function (data) {
                     console.log(data);
@@ -47,7 +54,8 @@ $(document).ready(function () {
                     $("#task" + task_id).remove();
                 },
                 error: function (data) {
-                    console.log('Error:', data);
+                    $('#error').text(data.errors.email[0]);
+                    console.log(data.errors)
                 }
             });
         }
@@ -56,17 +64,20 @@ $(document).ready(function () {
 
     //create new task / update existing task
     $("#btn-save").click(function (e) {
+        //  $(document).on("click", ".delete-task", function () {
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
             }
         })
 
-        e.preventDefault();
+        // e.preventDefault();
 
         var formData = {
             task: $('#task').val(),
             description: $('#description').val(),
+            email: $('#email').val(),
         }
 
         //$request->task,
@@ -78,7 +89,7 @@ $(document).ready(function () {
         var my_url = url;
 
         if (state == "update") {
-			var task_id = $('#task_id').val();
+            var task_id = $('#task_id').val();
 
             type = "PUT"; //for updating existing resource
             my_url += '/' + task_id;
@@ -91,11 +102,11 @@ $(document).ready(function () {
             type: type,
             url: my_url,
             data: formData,
-            dataType: 'json', 
-            success: function (data) { 
+            dataType: 'json',
+            success: function (data) {
                 console.log(data);
 
-                var task = '<tr id="task' + data.id + '"><td>' + data.id + '</td><td>' + data.task + '</td><td>' + data.description + '</td><td>' + data.created_at + '</td>';
+                var task = '<tr id="task' + data.id + '"><td>' + data.id + '</td><td>' + data.task + '</td><td>' + data.description + '</td> <td>' + data.created_at + '</td>  <td>' + data.email + '</td>';
                 task += '<td><button class="btn btn-warning btn-xs btn-detail open-modal" value="' + data.id + '">Edit</button>';
                 task += '<button class="btn btn-danger btn-xs btn-delete delete-task" value="' + data.id + '">Delete</button></td></tr>';
 
@@ -106,12 +117,15 @@ $(document).ready(function () {
                     $("#task" + task_id).replaceWith(task);
                 }
 
+                open_modal();
+
                 $('#frmTasks').trigger("reset");
 
                 $('#myModal').modal('hide')
             },
             error: function (data) {
-                console.log('Error:', data);
+                $('#error-email').text(data.responseJSON.errors.email[0]);
+                console.log(data.responseJSON.errors);
             }
         });
     });
